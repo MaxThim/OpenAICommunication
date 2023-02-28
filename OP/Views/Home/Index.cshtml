@@ -1,0 +1,225 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="wrapper">
+    <div class="menu">
+
+        <button class="new-chat-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                <path d="M8 3.5a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3H4a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 .5-.5z" />
+            </svg>
+            New chat
+        </button>
+        <div class="lower_menu">
+            <div>
+                <label for="nInput">N: <span id="nValue">1</span></label>
+                <input type="range" class="rangeSlider" id="nInput" name="nInput" min="1" max="3" value="1">
+            </div>
+            <div>
+                <label for="tempInput">Temp:<span id="tempValue"> 1</span></label>
+                <input type="range" class="rangeSlider" id="tempInput" name="tempInput" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+
+    </div>
+    <div class="chat">
+        <textarea readonly id="output">@ViewBag.output</textarea>
+        <div class="chatForm">
+            <div>
+                <textarea id="input" name="input"></textarea>
+                @*<button id="submitBtn">Submit</button>*@
+                <button id="submitBtn">🚀</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#submitBtn").click(function (e) {
+
+            var inputVal = $('#input').val();
+            $('#input').val('')
+            $.ajax({
+                type: "POST",
+                url: "https://localhost:7236/Home/CreateCompletion",
+                data: {
+                    input: inputVal,
+                    nInput: $('#nInput').val(),
+                    tempInput: $('#tempInput').val()
+                },
+                success: function (response) {
+
+                    $('#output').val(response);
+
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+        });
+
+        $('#input').on('keydown', function (e) {
+            if (e.keyCode === 13 && !e.shiftKey) {
+                e.preventDefault();
+                $('#submitBtn').click();
+            }
+        });
+    });
+
+    const tempInput = document.getElementById('tempInput');
+    const tempValue = document.getElementById('tempValue');
+
+    tempInput.addEventListener('input', function () {
+        tempValue.innerText = tempInput.value;
+    });
+
+    const nInput = document.getElementById('nInput');
+    const nValue = document.getElementById('nValue');
+
+    nInput.addEventListener('input', function () {
+        nValue.innerText = nInput.value;
+    });
+</script>
+}
+<style>
+    .wrapper {
+        display: flex;
+        height: calc(100vh - 72.8px);
+        width: 99%;
+        padding: 0;
+        background-color: #353640;
+    }
+
+    .menu {
+        background-color: #202123;
+        color: #ececf1;
+        flex: 0 0 auto;
+        padding: 20px;
+        width: 260px;
+        font-family: "Arial", sans-serif;
+        position: relative;
+    }
+
+
+    .lower_menu {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+        .menu-item label {
+            /*margin-right: 10px;*/
+            font-weight: bold;
+            font-size: 16px;
+            width: 50px;
+        }
+
+        .menu-item input {
+            font-size: 12px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background-color: #202123;
+            color: white;
+            width: 100px;
+        }
+
+    .chat {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        font-family: "Arial", sans-serif;
+    }
+
+    #output {
+        height: 100%;
+        margin-bottom: 10px;
+        width: 100%;
+        font-size: 16px;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #40414f;
+        color: #d1d5db;
+        resize: none;
+    }
+
+    .chatForm {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background-color: #353640;
+        position: relative;
+    }
+
+    #input {
+        height: 50px;
+        width: 100%;
+        font-size: 16px;
+        padding: 10px;
+        border-radius: 5px;
+        resize: none;
+        background: #40414f;
+        color: white;
+    }
+
+        #input:focus, #output:focus {
+            outline: none;
+        }
+
+    #submitBtn {
+        font-size: 16px;
+        padding: 10px 20px;
+        background-color: #40414f;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        position: absolute;
+        border: solid 1px;
+        bottom: 10px;
+        right: 10px;
+        z-index: 2;
+    }
+
+    .rangeSlider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 5px;
+        background-color: #202123;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+        font-size: 12px;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        */ background-color: #202123;
+        */ color: white;
+        /*width: 100px;*/
+    }
+
+        /* Style the thumb */
+        .rangeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+</style>
+
